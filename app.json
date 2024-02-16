@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "JUSTALK PORTFOLIO",
+    "slug": "PORTFOLIO",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/me.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#111116"
+    },
+    "assetBundlePatterns": [
+      "assets/**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#111116"
+      },
+      "package": "com.justalk.PORTFOLIO"
+    },
+    "web": {
+      "favicon": "./assets/me.png"
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "assets/fonts/Lato-Regular.ttf",
+            "assets/fonts/Lato-Bold.ttf",
+            "assets/fonts/Lato-Light.ttf",
+            "assets/fonts/Heebo-Bold.ttf"
+          ]
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5f2bc5fc-4b7a-4200-a334-64252d3ee4e4"
+      }
+    }
+  }
+}
