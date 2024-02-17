@@ -50,7 +50,7 @@ export default function Menu({ updateIdProject, jumpTo }) {
         <TouchableWithoutFeedback
           onPress={() => Linking.openURL(RESUME_EN_URL)}
         >
-          <View style={styles.button}>
+          <View style={[styles.button, styles.corner]}>
             <Text style={styles.buttonText}>Download english resume</Text>
             <Icon name="chevron-right" type="evilicon" color={colors.white} />
           </View>
@@ -97,6 +97,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 20,
+  },
+  corner: {
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
   },

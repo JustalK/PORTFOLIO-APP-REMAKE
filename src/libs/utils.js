@@ -15,3 +15,10 @@ export function isGoingDown(
 
   return false;
 }
+
+export function formatDate(str) {
+  const date = new Date(str);
+  return `${date.getFullYear()}/${
+    date.getMonth() < 9 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1
+  }`;
+}

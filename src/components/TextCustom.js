@@ -2,9 +2,11 @@ import React from "react";
 import { StyleSheet, Text } from "react-native";
 import { colors } from "../styles/colors";
 
-export default function TextCustom({ isTitle, children }) {
+export default function TextCustom({ isTitle, children, style = {} }) {
   return (
-    <Text style={isTitle ? styles.title : styles.description}>{children}</Text>
+    <Text style={[isTitle ? styles.title : styles.description, style]}>
+      {children}
+    </Text>
   );
 }
 
@@ -14,7 +16,6 @@ const styles = StyleSheet.create({
     fontFamily: "LatoLight",
     textAlign: "center",
     color: colors.cyan,
-    alignSelf: "flex-start",
     marginBottom: 50,
   },
   title: {
