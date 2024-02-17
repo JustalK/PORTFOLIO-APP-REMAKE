@@ -9,7 +9,8 @@
         "API_URL": "https://www.justalkevin.com/api",
         "LINKEDIN_URL": "https://www.linkedin.com/in/justalk/",
         "RESUME_EN_URL": "https://www.justalkevin.com/libs/web/resume_en.pdf",
-        "DEFAULT_PROJECT_ID": "65d0b3c900a58283e4fa66a4",
+        "DEFAULT_PROJECT_ID": "5f9d88d3faed1e8c4dc00031",
+        "DEFAULT_PROJECT_SLUG": "pixelsmarket",
         "PROFESSIONAL_TAG_ID": "5f95461688489acdd8ee5871"
       }
     },
@@ -27,7 +28,8 @@
         "API_URL": "https://www.justalkevin.com/api",
         "LINKEDIN_URL": "https://www.linkedin.com/in/justalk/",
         "RESUME_EN_URL": "https://www.justalkevin.com/libs/web/resume_en.pdf",
-        "DEFAULT_PROJECT_ID": "65d0b3c900a58283e4fa66a4",
+        "DEFAULT_PROJECT_ID": "5f9d88d3faed1e8c4dc00031",
+        "DEFAULT_PROJECT_SLUG": "pixelsmarket",
         "PROFESSIONAL_TAG_ID": "5f95461688489acdd8ee5871"
       }
     }

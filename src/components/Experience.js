@@ -3,6 +3,13 @@ import { StyleSheet, Text, View, Animated, Linking } from "react-native";
 import { colors } from "../styles/colors";
 import { formatDate } from "../libs/utils";
 import { ListItem } from "@rneui/themed";
+import WindowsFrame from "./WindowsFrame";
+import WindowsLine from "./WindowsLine";
+import WindowsTitle from "./WindowsTitle";
+import WindowsBlock from "./WindowsBlock";
+import TextWebsite from "./TextWebsite";
+import TextLocation from "./TextLocation";
+import TextRole from "./TextRole";
 
 export default function Experience({
   title,
@@ -43,37 +50,25 @@ export default function Experience({
   });
 
   return (
-    <View style={styles.project}>
-      <View style={styles.title}>
+    <WindowsFrame style={styles.project}>
+      <WindowsTitle>
         <Text style={styles.text}>{title}</Text>
         <Text style={styles.text}>
           {is_current ? "Present" : formatDate(end_date)}-
           {formatDate(start_date)}
         </Text>
-      </View>
-      <View style={[styles.line, styles.spacing]}>
-        <Text style={styles.role}>
-          <Text style={styles.field}>
-            Position{role.length > 1 ? "s" : ""}:
-          </Text>{" "}
-          {role.join(", ")}
-        </Text>
-        <Text style={styles.location}>
-          <Text style={styles.field}>Location:</Text>{" "}
-          {is_remote ? "Remote" : location}
-        </Text>
-        <Text style={styles.location}>
-          <Text style={styles.field}>Website: </Text>
-          <Text
-            style={styles.link}
-            onPress={() => {
-              Linking.openURL(website);
-            }}
-          >
-            {website}{" "}
-          </Text>
-        </Text>
-      </View>
+      </WindowsTitle>
+      <WindowsLine style={styles.spacing}>
+        <WindowsBlock>
+          <TextRole role={role} />
+        </WindowsBlock>
+        <WindowsBlock>
+          <TextLocation is_remote={is_remote} location={location} />
+        </WindowsBlock>
+        <WindowsBlock>
+          <TextWebsite website={website} />
+        </WindowsBlock>
+      </WindowsLine>
       <ListItem.Accordion
         content={
           <>
@@ -93,6 +88,8 @@ export default function Experience({
           paddingRight: 0,
           paddingTop: 10,
           paddingBottom: 10,
+          borderBottomLeftRadius: 20,
+          borderBottomRightRadius: 20,
         }}
         noIcon={true}
         isExpanded={isExpanded}
@@ -120,60 +117,18 @@ export default function Experience({
           );
         })}
       </ListItem.Accordion>
-    </View>
+    </WindowsFrame>
   );
 }
 
 const styles = StyleSheet.create({
-  project: {
-    borderWidth: 1,
-    borderColor: colors.black,
-    marginBottom: 50,
-    borderRadius: 20,
-  },
-  image: {
-    height: 200,
-    borderBottomRightRadius: 20,
-    borderBottomLeftRadius: 20,
-  },
-  title: {
-    fontFamily: "LatoBold",
-    backgroundColor: colors.clearBlue,
-    textTransform: "uppercase",
-    color: colors.white,
-    zIndex: 2,
-    height: 40,
-    borderTopRightRadius: 20,
-    borderTopLeftRadius: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
   text: {
     fontFamily: "LatoBold",
-    color: colors.white,
-    textTransform: "uppercase",
-  },
-  link: {
-    textDecorationLine: "underline",
-  },
-  field: {
-    color: colors.white,
-  },
-  role: {
     color: colors.cyan,
-  },
-  location: {
-    color: colors.cyan,
-    flexDirection: "row",
-    alignItems: "center",
-    height: 16,
   },
   accordion: {
     fontFamily: "LatoBold",
-    color: colors.white,
+    color: colors.cyan,
   },
   missions: {
     backgroundColor: colors.clearBlue,
@@ -187,17 +142,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingTop: 10,
   },
-  line: {
-    backgroundColor: colors.darkBlue,
-    height: 40,
-    justifyContent: "center",
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
   spacing: {
     height: 80,
-  },
-  lineClear: {
-    backgroundColor: colors.clearBlue,
   },
 });

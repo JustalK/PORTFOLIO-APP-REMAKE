@@ -4,10 +4,11 @@ import { styleMain } from "../styles/main";
 import Loading from "../components/Loading";
 import Slide from "../components/Slide";
 import TextCustom from "../components/TextCustom";
-import { apiGetOneProject } from "../services/apiProject";
+import { apiGetOneProject, apiGetOneBySlug } from "../services/apiProject";
 import { apiGetSlides } from "../services/apiSlide";
 import { isGoingDown } from "../libs/utils";
 import Bottom from "../components/Bottom";
+import { DEFAULT_PROJECT_SLUG } from "@env";
 
 export default function ProjectZoom({ isLoading, idProject, projectLoaded }) {
   const [title, setTitle] = useState("");
@@ -17,7 +18,10 @@ export default function ProjectZoom({ isLoading, idProject, projectLoaded }) {
   const [isLoadingMore, setIsLoadingMore] = useState(true);
 
   const loadProject = async () => {
-    const project = await apiGetOneProject(idProject);
+    let project = await apiGetOneProject(idProject);
+    if (!project) {
+      project = await apiGetOneBySlug(DEFAULT_PROJECT_SLUG);
+    }
     let slides = [];
 
     if (project.slides !== null && project.slides.length > 0) {

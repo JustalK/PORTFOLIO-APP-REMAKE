@@ -22,3 +22,8 @@ export function formatDate(str) {
     date.getMonth() < 9 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1
   }`;
 }
+
+export function formatYearDate(str) {
+  const date = new Date(str);
+  return date.getFullYear();
+}

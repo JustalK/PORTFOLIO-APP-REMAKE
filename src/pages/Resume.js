@@ -1,24 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import { StyleSheet, View, Image, ScrollView } from "react-native";
 import { styleMain } from "../styles/main";
 import { colors } from "../styles/colors";
 import { apiGetResume } from "../services/apiResume";
 import { apiGetMyself } from "../services/apiContact";
 import TextCustom from "../components/TextCustom";
 import Experience from "../components/Experience";
+import Education from "../components/Education";
+import Personal from "../components/Personal";
+import Avatar from "../components/Avatar";
+import Bottom from "../components/Bottom";
+import aloneImg from "../../assets/alone.jpg";
 
 export default function Resume({ jumpTo }) {
-  const [currentWork, setCurrentWork] = useState("");
+  const [fullname, setFullname] = useState("");
   const [introduction, setIntroduction] = useState("");
   const [experiences, setExperiences] = useState([]);
+  const [educations, setEducations] = useState([]);
+  const [personals, setPersonals] = useState([]);
 
   const loadResume = async () => {
     const resume = await apiGetResume();
     const identity = await apiGetMyself();
-    setCurrentWork(identity.current_work);
+    setFullname(identity.fullname);
     setIntroduction(resume.introduction);
     setExperiences(resume.experiences);
+    setEducations(resume.educations);
+    setPersonals(resume.personals);
   };
 
   useEffect(() => {
@@ -28,7 +37,8 @@ export default function Resume({ jumpTo }) {
   return (
     <View style={styleMain.pageContainer}>
       <ScrollView style={styleMain.pagePadding}>
-        <TextCustom isTitle={true}>{currentWork}</TextCustom>
+        <TextCustom isTitle={true}>{fullname}</TextCustom>
+        <Avatar img={aloneImg} />
         <TextCustom>{introduction}</TextCustom>
         <TextCustom style={styles.section}>Work Experiences</TextCustom>
         {experiences.map((exp) => {
@@ -48,6 +58,28 @@ export default function Resume({ jumpTo }) {
           );
         })}
         <TextCustom style={styles.section}>Education</TextCustom>
+        {educations.map((ed, index) => {
+          return (
+            <Education
+              key={index}
+              diploma={ed.diploma}
+              graduation_date={ed.graduation_date}
+              location={ed.location}
+              website={ed.website}
+            />
+          );
+        })}
+        <TextCustom style={styles.section}>Personal Experiences</TextCustom>
+        {personals.map((ed, index) => {
+          return (
+            <Personal
+              key={index}
+              introduction={ed.introduction}
+              website={ed.website}
+            />
+          );
+        })}
+        <Bottom />
       </ScrollView>
       <StatusBar style="auto" hidden />
     </View>
@@ -55,12 +87,9 @@ export default function Resume({ jumpTo }) {
 }
 
 const styles = StyleSheet.create({
-  wait: {
-    marginTop: 50,
-    color: colors.cyan,
-    textAlign: "center",
-  },
   section: {
     color: colors.white,
+    marginTop: 20,
+    marginBottom: 50,
   },
 });

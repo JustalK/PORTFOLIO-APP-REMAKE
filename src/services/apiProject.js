@@ -16,3 +16,7 @@ export async function apiGetMenu() {
 export async function apiGetOneProject(id) {
   return get(`/articles/one?id=${id}&populate=true`);
 }
+
+export async function apiGetOneBySlug(slug) {
+  return get(`/articles/one?slug=${slug}&populate=true`);
+}
