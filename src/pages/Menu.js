@@ -17,12 +17,14 @@ import { LINKEDIN_URL, RESUME_EN_URL } from "@env";
 export default function Menu({ updateIdProject, jumpTo }) {
   const [projects, setProjects] = useState([]);
   const [email, setEmail] = useState();
+  const [numero, setNumero] = useState();
 
   const init = async () => {
     const menus = await apiGetMenu();
     const identity = await apiGetMyself();
     setProjects(menus);
     setEmail(identity.email);
+    setNumero(identity.numero);
   };
 
   useEffect(() => {
@@ -31,6 +33,25 @@ export default function Menu({ updateIdProject, jumpTo }) {
 
   return (
     <ScrollView>
+      <View style={styles.section}>
+        <Text style={styles.title}>Donwload</Text>
+        <TouchableWithoutFeedback
+          onPress={() => Linking.openURL(RESUME_EN_URL)}
+        >
+          <View style={styles.button}>
+            <Text style={styles.buttonText}>English resume</Text>
+            <Icon name="chevron-right" type="evilicon" color={colors.white} />
+          </View>
+        </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback
+          onPress={() => Linking.openURL(RESUME_FR_URL)}
+        >
+          <View style={[styles.button, styles.dark, styles.corner]}>
+            <Text style={styles.buttonText}>French resume</Text>
+            <Icon name="chevron-right" type="evilicon" color={colors.white} />
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
       <View style={styles.section}>
         <Text style={styles.title}>Contact me</Text>
         <TouchableWithoutFeedback
@@ -41,17 +62,17 @@ export default function Menu({ updateIdProject, jumpTo }) {
             <Icon name="chevron-right" type="evilicon" color={colors.white} />
           </View>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={() => Linking.openURL(LINKEDIN_URL)}>
+        <TouchableWithoutFeedback
+          onPress={() => Linking.openURL("tel:" + numero)}
+        >
           <View style={[styles.button, styles.dark]}>
-            <Text style={styles.buttonText}>Linkedin</Text>
+            <Text style={styles.buttonText}>Call me</Text>
             <Icon name="chevron-right" type="evilicon" color={colors.white} />
           </View>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback
-          onPress={() => Linking.openURL(RESUME_EN_URL)}
-        >
+        <TouchableWithoutFeedback onPress={() => Linking.openURL(LINKEDIN_URL)}>
           <View style={[styles.button, styles.corner]}>
-            <Text style={styles.buttonText}>Download english resume</Text>
+            <Text style={styles.buttonText}>Send me a message on Linkedin</Text>
             <Icon name="chevron-right" type="evilicon" color={colors.white} />
           </View>
         </TouchableWithoutFeedback>

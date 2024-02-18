@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Image, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { styleMain } from "../styles/main";
 import { colors } from "../styles/colors";
 import { apiGetResume } from "../services/apiResume";
@@ -12,6 +18,7 @@ import Personal from "../components/Personal";
 import Avatar from "../components/Avatar";
 import Bottom from "../components/Bottom";
 import aloneImg from "../../assets/alone.jpg";
+import { Icon } from "@rneui/themed";
 
 export default function Resume({ jumpTo }) {
   const [fullname, setFullname] = useState("");
@@ -37,7 +44,20 @@ export default function Resume({ jumpTo }) {
   return (
     <View style={styleMain.pageContainer}>
       <ScrollView style={styleMain.pagePadding}>
-        <TextCustom isTitle={true}>{fullname}</TextCustom>
+        <TextCustom style={styles.title} isTitle={true}>
+          {fullname}
+        </TextCustom>
+        <TouchableWithoutFeedback onPress={() => jumpTo("menu")}>
+          <View style={styles.redirect}>
+            <Icon
+              name="download"
+              type="font-awesome"
+              color={colors.cyan}
+              size={12}
+            />
+            <Text style={styles.link}>Download resume in PDF</Text>
+          </View>
+        </TouchableWithoutFeedback>
         <Avatar img={aloneImg} />
         <TextCustom>{introduction}</TextCustom>
         <TextCustom style={styles.section}>Work Experiences</TextCustom>
@@ -91,5 +111,20 @@ const styles = StyleSheet.create({
     color: colors.white,
     marginTop: 20,
     marginBottom: 50,
+  },
+  title: {
+    marginBottom: 0,
+  },
+  link: {
+    textDecorationLine: "underline",
+    textAlign: "center",
+    color: colors.cyan,
+  },
+  redirect: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 40,
+    gap: 8,
   },
 });

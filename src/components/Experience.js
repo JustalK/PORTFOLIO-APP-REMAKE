@@ -50,7 +50,7 @@ export default function Experience({
   });
 
   return (
-    <WindowsFrame style={styles.project}>
+    <WindowsFrame style={isExpanded ? styles.project : {}}>
       <WindowsTitle>
         <Text style={styles.text}>{title}</Text>
         <Text style={styles.text}>
@@ -80,17 +80,7 @@ export default function Experience({
             </Animated.View>
           </>
         }
-        containerStyle={{
-          backgroundColor: colors.clearBlue,
-          color: colors.white,
-          justifyContent: "center",
-          paddingLeft: 20,
-          paddingRight: 0,
-          paddingTop: 10,
-          paddingBottom: 10,
-          borderBottomLeftRadius: 20,
-          borderBottomRightRadius: 20,
-        }}
+        containerStyle={[styles.list, isExpanded ? {} : styles.corner]}
         noIcon={true}
         isExpanded={isExpanded}
         onPress={() => {
@@ -122,6 +112,13 @@ export default function Experience({
 }
 
 const styles = StyleSheet.create({
+  project: {
+    borderRadius: 0,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  },
   text: {
     fontFamily: "LatoBold",
     color: colors.cyan,
@@ -129,6 +126,19 @@ const styles = StyleSheet.create({
   accordion: {
     fontFamily: "LatoBold",
     color: colors.cyan,
+  },
+  list: {
+    backgroundColor: colors.clearBlue,
+    color: colors.white,
+    justifyContent: "center",
+    paddingLeft: 20,
+    paddingRight: 0,
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  corner: {
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
   missions: {
     backgroundColor: colors.clearBlue,
