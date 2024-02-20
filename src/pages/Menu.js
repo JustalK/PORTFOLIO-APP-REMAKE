@@ -12,7 +12,7 @@ import { Icon } from "@rneui/themed";
 import Button from "../components/Button";
 import { apiGetMyself } from "../services/apiContact";
 import { apiGetMenu } from "../services/apiProject";
-import { LINKEDIN_URL, RESUME_EN_URL } from "@env";
+import { LINKEDIN_URL, RESUME_EN_URL, RESUME_FR_URL } from "@env";
 
 export default function Menu({ updateIdProject, jumpTo }) {
   const [projects, setProjects] = useState([]);
