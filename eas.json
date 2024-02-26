@@ -24,6 +24,7 @@
       "developmentClient": true
     },
     "production": {
+      "autoIncrement": true,
       "env": {
         "WEBSITE_URL": "https://www.justalkevin.com",
         "API_URL": "https://www.justalkevin.com/api",

@@ -8,8 +8,10 @@ import Loading from "../components/Loading";
 import WritingEffect from "../components/WritingEffect";
 import BlinkingEffect from "../components/BlinkingEffect";
 import Avatar from "../components/Avatar";
+import Background from "../components/Background";
 import { apiGetMyself } from "../services/apiContact";
 import { apiGetJobs } from "../services/apiJob";
+import { Canvas } from '@react-three/fiber';
 
 export default function Home({ navigation }) {
   const [isLoadingMyself, setLoadingMyself] = useState(true);
@@ -37,23 +39,28 @@ export default function Home({ navigation }) {
 
   const renderHome = useCallback(() => {
     return (
-      <View>
-        <Avatar img={profileImg} />
-        <Text style={styles.textStyle}>
-          Hello World, I'm{" "}
-          <Text style={styles.fullname}>{myself.fullname}</Text>
-        </Text>
-        <WritingEffect
-          style={styles.textStyle}
-          predata="I'm a"
-          data={jobs}
-        ></WritingEffect>
-        <Text style={styles.textStyle}>
-          For inquiries, contact me at {myself.email}
-        </Text>
-        <BlinkingEffect>
-          <Text style={styles.intructions}>Press the screen</Text>
-        </BlinkingEffect>
+      <View style={styles.screen}>
+        <View style={styles.info}>
+          <Avatar img={profileImg} />
+          <Text style={styles.textStyle}>
+            Hello World, I'm{" "}
+            <Text style={styles.fullname}>{myself.fullname}</Text>
+          </Text>
+          <WritingEffect
+            style={styles.textStyle}
+            predata="I'm a"
+            data={jobs}
+          ></WritingEffect>
+          <Text style={styles.textStyle}>
+            For inquiries, contact me at {myself.email}
+          </Text>
+          <BlinkingEffect>
+            <Text style={styles.intructions}>Press the screen</Text>
+          </BlinkingEffect>
+        </View>
+        <Canvas style={styles.canvas}>
+          <Background />
+        </Canvas>
       </View>
     );
   }, [jobs, myself]);
@@ -73,6 +80,25 @@ export default function Home({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    width: '100%'
+  },
+  info: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    position: 'relative',
+    zIndex: 1
+  },
+  canvas: {
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    left: 0,
+    top: 0
+  },
   textStyle: {
     margin: 0,
     fontSize: 18,

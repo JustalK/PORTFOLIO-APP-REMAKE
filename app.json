@@ -2,7 +2,7 @@
   "expo": {
     "name": "JUSTAL KEVIN PORTFOLIO",
     "slug": "PORTFOLIO",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/me.png",
     "userInterfaceStyle": "light",
@@ -21,7 +21,8 @@
       "adaptiveIcon": {
         "backgroundColor": "#111116"
       },
-      "package": "com.justalk.PORTFOLIO"
+      "package": "com.justalk.PORTFOLIO",
+      "versionCode": 4
     },
     "web": {
       "favicon": "./assets/me.png"
@@ -41,7 +42,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "5f2bc5fc-4b7a-4200-a334-64252d3ee4e4"
+        "projectId": "dea10d5c-0894-4e62-98b2-ebc9639c1a11"
       }
     }
   }
