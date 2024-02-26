@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
-import noiseMaterial from '../materials/Noise';
+import fogMaterial from '../materials/FogMaterial';
 
 export default function Background() {
     const { viewport } = useThree()
@@ -13,7 +13,7 @@ export default function Background() {
     return (
         <mesh>
             <planeGeometry args={[viewport.width, viewport.height, 32, 32]} />
-            <noiseMaterial ref={ref} />
+            <fogMaterial ref={ref} />
         </mesh>
     );
 }
