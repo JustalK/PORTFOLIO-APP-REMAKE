@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
 import { colors } from "../styles/colors";
 import { StyleSheet, View, Text, TouchableWithoutFeedback } from "react-native";
@@ -11,13 +11,16 @@ import Avatar from "../components/Avatar";
 import Background from "../components/Background";
 import { apiGetMyself } from "../services/apiContact";
 import { apiGetJobs } from "../services/apiJob";
-import { Canvas } from '@react-three/fiber';
+import { Canvas } from "@react-three/fiber";
+import { useWindowDimensions } from "react-native";
 
 export default function Home({ navigation }) {
   const [isLoadingMyself, setLoadingMyself] = useState(true);
   const [isLoadingJobs, setLoadingJob] = useState(true);
   const [myself, setMyself] = useState([]);
   const [jobs, setJobs] = useState([]);
+  const { height, width } = useWindowDimensions();
+  const mouse = useRef(null);
 
   const getMyself = async () => {
     const identity = await apiGetMyself();
@@ -30,6 +33,25 @@ export default function Home({ navigation }) {
     const jobs_title = jobs.map((job) => job.title);
     setJobs(jobs_title);
     setLoadingJob(false);
+  };
+
+  const handlePress = (event) => {
+    mouse.current = {
+      x: event.nativeEvent.pageX / width,
+      y: 1.0 - event.nativeEvent.pageY / height,
+    };
+    // navigation.navigate("Portfolio")
+  };
+
+  const handleLongPress = (event) => {
+    console.log("Long Press");
+    console.log(
+      event.nativeEvent.locationX / width,
+      event.nativeEvent.locationY / height,
+      height,
+      width
+    );
+    // navigation.navigate("Portfolio")
   };
 
   useEffect(() => {
@@ -59,45 +81,47 @@ export default function Home({ navigation }) {
           </BlinkingEffect>
         </View>
         <Canvas style={styles.canvas}>
-          <Background />
+          <Background mouse={mouse} height={height} width={width} />
         </Canvas>
       </View>
     );
   }, [jobs, myself]);
 
   return (
-    <TouchableWithoutFeedback onPress={() => navigation.navigate("Portfolio")}>
-      <View style={styleMain.homeContainer}>
-        {isLoadingMyself || isLoadingJobs ? (
-          <Loading isScreen={true} />
-        ) : (
-          renderHome()
-        )}
-        <StatusBar style="auto" hidden />
-      </View>
-    </TouchableWithoutFeedback>
+    <View
+      style={styleMain.homeContainer}
+      onStartShouldSetResponder={() => true}
+      onResponderMove={handlePress}
+    >
+      {isLoadingMyself || isLoadingJobs ? (
+        <Loading isScreen={true} />
+      ) : (
+        renderHome()
+      )}
+      <StatusBar style="auto" hidden />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    width: '100%'
+    width: "100%",
   },
   info: {
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    position: 'relative',
-    zIndex: 1
+    position: "relative",
+    zIndex: 1,
   },
   canvas: {
-    height: '100%',
-    width: '100%',
-    position: 'absolute',
+    height: "100%",
+    width: "100%",
+    position: "absolute",
     left: 0,
-    top: 0
+    top: 0,
   },
   textStyle: {
     margin: 0,

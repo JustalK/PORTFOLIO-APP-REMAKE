@@ -1,18 +1,15 @@
-import * as THREE from 'three'
-import { extend } from '@react-three/fiber'
+import * as THREE from "three";
+import { extend } from "@react-three/fiber";
 
 export default class FogMaterial extends THREE.ShaderMaterial {
   constructor() {
     super({
       uniforms: {
         uResolution: {
-          value: new THREE.Vector2(
-            1,
-            1
-          )
+          value: new THREE.Vector2(1, 1),
         },
-        uMouse: { value: new THREE.Vector2(0, 0) },
-        uTime: { value: 0.0 }
+        uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+        uTime: { value: 0.0 },
       },
       vertexShader: `
         varying vec2 vUv;
@@ -61,11 +58,9 @@ export default class FogMaterial extends THREE.ShaderMaterial {
       void main() {
         vec3 color = vec3(0.035, 0.078, 0.356);
         vec3 colorHover = vec3(0.978, 0.035, 0.356);
-        float circleMouse = circle(vUv, uMouse, 0.0005, 0.5);
+        float circleMouse = circle(vUv, uMouse, 0.00007, 0.5);
         float cornerLeftBottom = circle(vUv, vec2(0, 0), 0.0005, 4.0);
         float cornerRightTop = circle(vUv, vec2(1, 1), 0.0005, 4.0);
-        float maskLeftBottom = smoothstep(0.4, 0.5, cornerLeftBottom);
-        float maskRightTop = smoothstep(0.4, 0.5, cornerRightTop);
         vec2 st = gl_FragCoord.xy * 0.001 / uResolution.xy;
 
         vec2 q = vec2(0.0);
@@ -79,28 +74,34 @@ export default class FogMaterial extends THREE.ShaderMaterial {
 
         float coef = (f * f * f + (0.6 * f * f) + (0.5 * f));
         vec4 mixed1 = mix(vec4(coef * color, 1.0), vec4(coef * colorHover, 1.0), circleMouse);
-        vec4 mixed2 = mix(mixed1, vec4(0.0, 0.0, 0.0, 1.0), maskLeftBottom);
-        vec4 mixed3 = mix(mixed2, vec4(0.0, 0.0, 0.0, 1.0), maskRightTop);
-        gl_FragColor = mixed3;
-      }`
-    })
+        gl_FragColor = mixed1;
+      }`,
+    });
   }
 
   get uMouse() {
-    return this.uniforms.uMouse.value
+    return this.uniforms.uMouse.value;
   }
 
   set uMouse(v) {
-    return (this.uniforms.uMouse.value = v)
+    return (this.uniforms.uMouse.value = v);
   }
 
   get uTime() {
-    return this.uniforms.uTime.value
+    return this.uniforms.uTime.value;
   }
 
   set uTime(v) {
-    return (this.uniforms.uTime.value = v)
+    return (this.uniforms.uTime.value = v);
+  }
+
+  get uResolution() {
+    return this.uniforms.uResolution.value;
+  }
+
+  set uResolution(v) {
+    return (this.uniforms.uResolution.value = v);
   }
 }
 
-extend({ FogMaterial })
+extend({ FogMaterial });
