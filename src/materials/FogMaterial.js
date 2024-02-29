@@ -10,6 +10,7 @@ export default class FogMaterial extends THREE.ShaderMaterial {
         },
         uMouse: { value: new THREE.Vector2(0.5, 0.5) },
         uTime: { value: 0.0 },
+        uPercent: { value: 0.0 },
       },
       vertexShader: `
         varying vec2 vUv;
@@ -19,6 +20,7 @@ export default class FogMaterial extends THREE.ShaderMaterial {
         }`,
       fragmentShader: `
       uniform float uTime;
+      uniform float uPercent;
       uniform vec2 uResolution;
       uniform vec2 uMouse;
       varying vec2 vUv;
@@ -56,7 +58,7 @@ export default class FogMaterial extends THREE.ShaderMaterial {
         return smoothstep(disc_radius+border_size, disc_radius-border_size, dist);
       }
       void main() {
-        vec3 color = vec3(0.035, 0.078, 0.356);
+        vec3 color = vec3(0.035, 0.078, 0.356 * (1.0 - uPercent));
         vec3 colorHover = vec3(0.978, 0.035, 0.356);
         float circleMouse = circle(vUv, uMouse, 0.00007, 0.5);
         float cornerLeftBottom = circle(vUv, vec2(0, 0), 0.0005, 4.0);
@@ -101,6 +103,14 @@ export default class FogMaterial extends THREE.ShaderMaterial {
 
   set uResolution(v) {
     return (this.uniforms.uResolution.value = v);
+  }
+
+  get uPercent() {
+    return this.uniforms.uPercent.value;
+  }
+
+  set uPercent(v) {
+    return (this.uniforms.uPercent.value = v);
   }
 }
 

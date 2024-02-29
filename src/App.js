@@ -17,7 +17,6 @@ import Loading from "./components/Loading";
 SplashScreen.preventAutoHideAsync();
 
 const forSlide = ({ current, next, inverted, layouts: { screen } }) => {
-  console.log("azeae");
   const progress = Animated.add(
     current.progress.interpolate({
       inputRange: [0, 1],

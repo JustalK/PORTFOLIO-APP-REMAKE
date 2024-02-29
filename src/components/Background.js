@@ -3,7 +3,7 @@ import { useThree, useFrame } from "@react-three/fiber";
 import fogMaterial from "../materials/FogMaterial";
 import * as THREE from "three";
 
-export default function Background({ mouse, height, width }) {
+export default function Background({ mouse, height, width, percentHold }) {
   const { viewport } = useThree();
   const ref = useRef({
     uResolution: new THREE.Vector2(width, height),
@@ -22,6 +22,7 @@ export default function Background({ mouse, height, width }) {
       <fogMaterial
         ref={ref}
         uResolution={new THREE.Vector2(width / height, width / height)}
+        uPercent={percentHold / 100}
       />
     </mesh>
   );
