@@ -10,7 +10,6 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     alignSelf: "center",
-    marginBottom: 50,
     borderRadius: 200,
     borderWidth: 1,
     borderColor: colors.cyan,

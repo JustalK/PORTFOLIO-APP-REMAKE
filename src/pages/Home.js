@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
 import { colors } from "../styles/colors";
-import { StyleSheet, View, Text, TouchableWithoutFeedback } from "react-native";
+import { StyleSheet, View, Text, Easing } from "react-native";
 import { styleMain } from "../styles/main";
 import profileImg from "../../assets/me.jpeg";
 import Loading from "../components/Loading";
@@ -13,6 +13,7 @@ import { apiGetMyself } from "../services/apiContact";
 import { apiGetJobs } from "../services/apiJob";
 import { Canvas } from "@react-three/fiber";
 import { useWindowDimensions } from "react-native";
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
 export default function Home({ navigation }) {
   const [isLoadingMyself, setLoadingMyself] = useState(true);
@@ -21,6 +22,11 @@ export default function Home({ navigation }) {
   const [jobs, setJobs] = useState([]);
   const { height, width } = useWindowDimensions();
   const mouse = useRef(null);
+  const startPressTimestamp = useRef(null);
+  const [percentHold, setPercentHold] = useState(0);
+  const percentIncreaseHoldTimer = useRef(null);
+  const percentDecreaseHoldTimer = useRef(null);
+  const circularProgress = useRef(null);
 
   const getMyself = async () => {
     const identity = await apiGetMyself();
@@ -35,7 +41,17 @@ export default function Home({ navigation }) {
     setLoadingJob(false);
   };
 
-  const handlePress = (event) => {
+  const handlePressStart = (event) => {
+    startPressTimestamp.current = event.nativeEvent.timestamp;
+    increasePercentHold();
+  };
+
+  const handleMove = (event) => {
+    if (event.nativeEvent.timestamp - startPressTimestamp.current > 1000) {
+      console.log("YEP");
+    } else {
+      console.log("NO");
+    }
     mouse.current = {
       x: event.nativeEvent.pageX / width,
       y: 1.0 - event.nativeEvent.pageY / height,
@@ -43,27 +59,56 @@ export default function Home({ navigation }) {
     // navigation.navigate("Portfolio")
   };
 
-  const handleLongPress = (event) => {
-    console.log("Long Press");
-    console.log(
-      event.nativeEvent.locationX / width,
-      event.nativeEvent.locationY / height,
-      height,
-      width
-    );
-    // navigation.navigate("Portfolio")
+  const handlePressRelease = (event) => {
+    clearInterval(percentIncreaseHoldTimer.current);
+    decreasePercentHold();
   };
+
+  const increasePercentHold = () => {
+    if (percentDecreaseHoldTimer.current) {
+      clearInterval(percentDecreaseHoldTimer.current);
+      percentDecreaseHoldTimer.current = null;
+    }
+    percentIncreaseHoldTimer.current = setInterval(() => {
+      setPercentHold(c => Math.min(c + 1, 100));
+    }, 100)
+  }
+
+  const decreasePercentHold = () => {
+    if (percentHold?.current === 0) {
+      clearInterval(percentIncreaseHoldTimer.current);
+      percentIncreaseHoldTimer.current = null;
+    }
+    percentDecreaseHoldTimer.current = setInterval(() => {
+      setPercentHold(c => Math.max(c - 1, 0));
+    }, 100)
+  }
 
   useEffect(() => {
     getMyself();
     getJobs();
-  }, []);
+    if (circularProgress.current) {
+      circularProgress.current.animate(percentHold, 80, Easing.quad);
+    }
+  }, [percentHold]);
 
   const renderHome = useCallback(() => {
     return (
       <View style={styles.screen}>
         <View style={styles.info}>
-          <Avatar img={profileImg} />
+          <AnimatedCircularProgress
+            ref={(ref) => circularProgress.current = ref}
+            size={220}
+            width={10}
+            fill={0}
+            tintColor="#61C3FF"
+            style={styles.loader}>
+            {
+              () => (
+                <Avatar img={profileImg} />
+              )
+            }
+            </AnimatedCircularProgress>
           <Text style={styles.textStyle}>
             Hello World, I'm{" "}
             <Text style={styles.fullname}>{myself.fullname}</Text>
@@ -77,7 +122,7 @@ export default function Home({ navigation }) {
             For inquiries, contact me at {myself.email}
           </Text>
           <BlinkingEffect>
-            <Text style={styles.intructions}>Press the screen</Text>
+            <Text style={styles.intructions}>Press and hold</Text>
           </BlinkingEffect>
         </View>
         <Canvas style={styles.canvas}>
@@ -91,7 +136,9 @@ export default function Home({ navigation }) {
     <View
       style={styleMain.homeContainer}
       onStartShouldSetResponder={() => true}
-      onResponderMove={handlePress}
+      onResponderGrant={handlePressStart}
+      onResponderMove={handleMove}
+      onResponderRelease={handlePressRelease}
     >
       {isLoadingMyself || isLoadingJobs ? (
         <Loading isScreen={true} />
@@ -107,6 +154,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     width: "100%",
+  },
+  loader: {
+    marginBottom: 50,
   },
   info: {
     flex: 1,
