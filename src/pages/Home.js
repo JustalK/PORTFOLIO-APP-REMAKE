@@ -16,10 +16,9 @@ import { Canvas } from "@react-three/fiber";
 import { useWindowDimensions } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 
-export default function Home({ navigation }) {
+export default function Home({ navigation, route }) {
   const [isLoadingMyself, setLoadingMyself] = useState(true);
   const [isLoadingJobs, setLoadingJob] = useState(true);
-  const [velocity, setVelocity] = useState(true);
   const [myself, setMyself] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [loaded, setLoaded] = useState(false);
@@ -91,12 +90,6 @@ export default function Home({ navigation }) {
     }
   };
 
-  const increaseVelocity = () => {
-    setInterval(() => {
-      setVelocity((c) => Math.min(c - 0.01, 1.0));
-    }, 100);
-  };
-
   const interpolate = useMemo(() => {
     const color1 = "#61C3FF";
     const color2 = "#FFFFFF";
@@ -122,14 +115,39 @@ export default function Home({ navigation }) {
   useEffect(() => {
     getMyself();
     getJobs();
-    if (circularProgress.current) {
+    if (circularProgress.current && !route.params?.reset) {
       circularProgress.current.animate(percentHold, 100, Easing.linear);
     }
-    if (percentHold === 100) {
-      setLoaded(true);
-      increaseVelocity();
+    if (route.params?.reset) {
+      navigation.setParams({
+        reset: false,
+      });
     }
-  }, [percentHold]);
+    if (percentHold === 100 && !route.params?.reset) {
+      setLoaded(true);
+      setTimeout(() => {
+        navigation.navigate("Portfolio");
+      }, 500);
+    }
+    return () => {
+      if (percentHold === 100) {
+        clearInterval(percentIncreaseHoldTimer.current);
+        clearInterval(percentDecreaseHoldTimer.current);
+      }
+    };
+  }, [percentHold, route.params]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("blur", () => {
+      speed.current = 0;
+      clearInterval(percentIncreaseHoldTimer.current);
+      clearInterval(percentDecreaseHoldTimer.current);
+      setPercentHold(0);
+      setLoaded(false);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const renderHome = useCallback(() => {
     return (
@@ -149,27 +167,17 @@ export default function Home({ navigation }) {
             Hello World, I'm{" "}
             <Text style={styles.fullname}>{myself.fullname}</Text>
           </Text>
-          {!loaded ? (
-            <WritingEffect
-              style={[styles.textStyle, { color: interpolate }]}
-              predata="I'm a"
-              data={jobs}
-            ></WritingEffect>
-          ) : (
-            <Text style={[styles.textStyle, { color: interpolate }]}>
-              I'm a developer
-            </Text>
-          )}
+          <WritingEffect
+            style={[styles.textStyle, { color: interpolate }]}
+            predata="I'm a"
+            data={jobs}
+          ></WritingEffect>
           <Text style={[styles.textStyle, { color: interpolate }]}>
             For inquiries, contact me at {myself.email}
           </Text>
-          {!loaded ? (
-            <BlinkingEffect>
-              <Text style={styles.intructions}>Press and hold</Text>
-            </BlinkingEffect>
-          ) : (
-            <Text style={styles.intructions}>WELCOME</Text>
-          )}
+          <BlinkingEffect>
+            <Text style={styles.intructions}>Press and hold</Text>
+          </BlinkingEffect>
         </View>
         <Canvas style={styles.canvas}>
           <Background
@@ -180,11 +188,6 @@ export default function Home({ navigation }) {
             loaded={loaded}
           />
         </Canvas>
-        {loaded && (
-          <Canvas style={styles.canvas2}>
-            <Transition height={height} width={width} velocity={velocity} />
-          </Canvas>
-        )}
       </View>
     );
   }, [jobs, myself]);

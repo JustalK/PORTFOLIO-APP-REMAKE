@@ -79,7 +79,11 @@ export default function App() {
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{ headerShown: false, cardStyleInterpolator: forSlide }}
+            options={{
+              headerShown: false,
+              unmountOnBlur: true,
+              cardStyleInterpolator: forSlide,
+            }}
           />
           <Stack.Screen
             name="Portfolio"

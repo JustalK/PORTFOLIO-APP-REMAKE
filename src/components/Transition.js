@@ -3,13 +3,14 @@ import { useThree, useFrame } from "@react-three/fiber";
 import transitionMaterial from "../materials/TransitionMaterial";
 import * as THREE from "three";
 
-export default function Background({ height, width, velocity }) {
+export default function Transition({ height, width, velocity }) {
   const { viewport } = useThree();
   const ref = useRef({
     uResolution: new THREE.Vector2(width, height),
   });
 
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
+    ref.current.uVelo = velocity.current * 1;
     ref.current.uTime += delta;
   });
 
@@ -19,7 +20,7 @@ export default function Background({ height, width, velocity }) {
       <transitionMaterial
         ref={ref}
         uResolution={new THREE.Vector2(width / height, width / height)}
-        uVelo={velocity}
+        uVelo={velocity.current}
       />
     </mesh>
   );

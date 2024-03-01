@@ -13,7 +13,7 @@ export default function HeaderApp({ title, navigation }) {
   };
 
   const backToHome = () => {
-    navigation.navigate("Home");
+    navigation.navigate("Home", { reset: true });
   };
 
   useEffect(() => {
