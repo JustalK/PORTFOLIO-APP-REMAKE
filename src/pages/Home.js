@@ -9,6 +9,7 @@ import WritingEffect from "../components/WritingEffect";
 import BlinkingEffect from "../components/BlinkingEffect";
 import Avatar from "../components/Avatar";
 import Background from "../components/Background";
+import Transition from "../components/Transition";
 import { apiGetMyself } from "../services/apiContact";
 import { apiGetJobs } from "../services/apiJob";
 import { Canvas } from "@react-three/fiber";
@@ -18,8 +19,10 @@ import { AnimatedCircularProgress } from "react-native-circular-progress";
 export default function Home({ navigation }) {
   const [isLoadingMyself, setLoadingMyself] = useState(true);
   const [isLoadingJobs, setLoadingJob] = useState(true);
+  const [velocity, setVelocity] = useState(true);
   const [myself, setMyself] = useState([]);
   const [jobs, setJobs] = useState([]);
+  const [loaded, setLoaded] = useState(false);
   const { height, width } = useWindowDimensions();
   const mouse = useRef(null);
   const [percentHold, setPercentHold] = useState(0);
@@ -74,22 +77,30 @@ export default function Home({ navigation }) {
   };
 
   const decreasePercentHold = () => {
-    if (percentHold === 0) {
-      clearInterval(percentIncreaseHoldTimer.current);
-      percentIncreaseHoldTimer.current = null;
-      speed.current = 1;
-      return;
+    if (!loaded) {
+      if (percentHold === 0) {
+        clearInterval(percentIncreaseHoldTimer.current);
+        percentIncreaseHoldTimer.current = null;
+        speed.current = 1;
+        return;
+      }
+      percentDecreaseHoldTimer.current = setInterval(() => {
+        speed.current = Math.max(speed.current - 1, 1);
+        setPercentHold((c) => Math.max(c - speed.current, 0));
+      }, 100);
     }
-    percentDecreaseHoldTimer.current = setInterval(() => {
-      speed.current = Math.max(speed.current - 1, 1);
-      setPercentHold((c) => Math.max(c - speed.current, 0));
+  };
+
+  const increaseVelocity = () => {
+    setInterval(() => {
+      setVelocity((c) => Math.min(c - 0.01, 1.0));
     }, 100);
   };
 
   const interpolate = useMemo(() => {
     const color1 = "#61C3FF";
     const color2 = "#FFFFFF";
-    const percent = Math.min(percentHold * 1.5 / 100, 1.0);
+    const percent = Math.min((percentHold * 1.5) / 100, 1.0);
     // Convert the hex colors to RGB values
     const r1 = parseInt(color1.substring(1, 3), 16);
     const g1 = parseInt(color1.substring(3, 5), 16);
@@ -100,9 +111,9 @@ export default function Home({ navigation }) {
     const b2 = parseInt(color2.substring(5, 7), 16);
 
     // Interpolate the RGB values
-    const r = Math.round(r1 + ((r2 - r1) * percent));
-    const g = Math.round(g1 + ((g2 - g1) * percent));
-    const b = Math.round(b1 + ((b2 - b1) * percent));
+    const r = Math.round(r1 + (r2 - r1) * percent);
+    const g = Math.round(g1 + (g2 - g1) * percent);
+    const b = Math.round(b1 + (b2 - b1) * percent);
 
     // Convert the interpolated RGB values back to a hex color
     return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
@@ -114,6 +125,10 @@ export default function Home({ navigation }) {
     if (circularProgress.current) {
       circularProgress.current.animate(percentHold, 100, Easing.linear);
     }
+    if (percentHold === 100) {
+      setLoaded(true);
+      increaseVelocity();
+    }
   }, [percentHold]);
 
   const renderHome = useCallback(() => {
@@ -122,33 +137,54 @@ export default function Home({ navigation }) {
         <View style={styles.info}>
           <AnimatedCircularProgress
             ref={(ref) => (circularProgress.current = ref)}
-            size={212}
+            size={211}
             width={6}
             fill={0}
             tintColor={interpolate}
             style={styles.loader}
           >
-            {() => <Avatar img={aloneImg} />}
+            {() => <Avatar img={aloneImg} borderColor={interpolate} />}
           </AnimatedCircularProgress>
-          <Text style={[styles.textStyle, {color: interpolate}]}>
+          <Text style={[styles.textStyle, { color: interpolate }]}>
             Hello World, I'm{" "}
             <Text style={styles.fullname}>{myself.fullname}</Text>
           </Text>
-          <WritingEffect
-            style={[styles.textStyle, {color: interpolate}]}
-            predata="I'm a"
-            data={jobs}
-          ></WritingEffect>
-          <Text style={[styles.textStyle, {color: interpolate}]}>
+          {!loaded ? (
+            <WritingEffect
+              style={[styles.textStyle, { color: interpolate }]}
+              predata="I'm a"
+              data={jobs}
+            ></WritingEffect>
+          ) : (
+            <Text style={[styles.textStyle, { color: interpolate }]}>
+              I'm a developer
+            </Text>
+          )}
+          <Text style={[styles.textStyle, { color: interpolate }]}>
             For inquiries, contact me at {myself.email}
           </Text>
-          <BlinkingEffect>
-            <Text style={styles.intructions}>Press and hold</Text>
-          </BlinkingEffect>
+          {!loaded ? (
+            <BlinkingEffect>
+              <Text style={styles.intructions}>Press and hold</Text>
+            </BlinkingEffect>
+          ) : (
+            <Text style={styles.intructions}>WELCOME</Text>
+          )}
         </View>
         <Canvas style={styles.canvas}>
-          <Background mouse={mouse} height={height} width={width} percentHold={percentHold} />
+          <Background
+            mouse={mouse}
+            height={height}
+            width={width}
+            percentHold={percentHold}
+            loaded={loaded}
+          />
         </Canvas>
+        {loaded && (
+          <Canvas style={styles.canvas2}>
+            <Transition height={height} width={width} velocity={velocity} />
+          </Canvas>
+        )}
       </View>
     );
   }, [jobs, myself]);
@@ -193,6 +229,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     top: 0,
+  },
+  canvas2: {
+    height: "100%",
+    width: "100%",
+    position: "absolute",
+    left: 0,
+    top: 0,
+    zIndex: 3,
   },
   textStyle: {
     margin: 0,
