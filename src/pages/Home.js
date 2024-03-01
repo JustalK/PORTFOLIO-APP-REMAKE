@@ -70,8 +70,7 @@ export default function Home({ navigation, route }) {
       percentDecreaseHoldTimer.current = null;
     }
     percentIncreaseHoldTimer.current = setInterval(() => {
-      speed.current = Math.min(speed.current + 1, 100);
-      setPercentHold((c) => Math.min(c + speed.current, 100));
+      setPercentHold((c) => Math.min(c + 10, 100));
     }, 100);
   };
 
@@ -80,12 +79,10 @@ export default function Home({ navigation, route }) {
       if (percentHold === 0) {
         clearInterval(percentIncreaseHoldTimer.current);
         percentIncreaseHoldTimer.current = null;
-        speed.current = 1;
         return;
       }
       percentDecreaseHoldTimer.current = setInterval(() => {
-        speed.current = Math.max(speed.current - 1, 1);
-        setPercentHold((c) => Math.max(c - speed.current, 0));
+        setPercentHold((c) => Math.max(c - 1, 0));
       }, 100);
     }
   };
@@ -139,7 +136,6 @@ export default function Home({ navigation, route }) {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("blur", () => {
-      speed.current = 0;
       clearInterval(percentIncreaseHoldTimer.current);
       clearInterval(percentDecreaseHoldTimer.current);
       setPercentHold(0);
